@@ -72,7 +72,7 @@ const HotelCard = ({ hotel, onSelect }: HotelCardProps) => {
 
         <div className="flex items-end justify-between pt-3 border-t border-border">
           <div>
-            <span className="text-2xl font-bold text-card-foreground">${hotel.price}</span>
+            <span className="text-2xl font-bold text-card-foreground">₹{hotel.price.toLocaleString('en-IN')}</span>
             <span className="text-sm text-muted-foreground"> / night</span>
           </div>
           <button className="text-sm font-semibold text-accent hover:underline">View Details →</button>
