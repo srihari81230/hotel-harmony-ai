@@ -3,11 +3,23 @@ import HotelCard from "./HotelCard";
 import HotelDetailModal from "./HotelDetailModal";
 import { hotels, categories, type Hotel } from "@/data/hotels";
 
-const FeaturedHotels = () => {
+interface Props {
+  searchQuery?: string;
+}
+
+const FeaturedHotels = ({ searchQuery = "" }: Props) => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
 
-  const filtered = activeCategory === "All" ? hotels : hotels.filter((h) => h.category === activeCategory);
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = hotels
+    .filter((h) => activeCategory === "All" || h.category === activeCategory)
+    .filter(
+      (h) =>
+        !q ||
+        h.location.toLowerCase().includes(q) ||
+        h.name.toLowerCase().includes(q),
+    );
 
   return (
     <section id="hotels" className="py-20 bg-background">
