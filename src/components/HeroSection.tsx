@@ -1,8 +1,34 @@
-import { Search, MapPin, Calendar, Users } from "lucide-react";
+import { useState } from "react";
+import { Search, MapPin, Calendar as CalendarIcon, Users } from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import heroImage from "@/assets/hero-hotel.jpg";
 
-const HeroSection = () => {
+interface Props {
+  onSearch: (query: string) => void;
+}
+
+const HeroSection = ({ onSearch }: Props) => {
+  const { toast } = useToast();
+  const [destination, setDestination] = useState("");
+  const [checkIn, setCheckIn] = useState<Date | undefined>();
+  const [guests, setGuests] = useState<number>(2);
+
+  const handleSearch = () => {
+    onSearch(destination.trim());
+    toast({
+      title: "Searching hotels",
+      description: `${destination.trim() || "All destinations"}${checkIn ? ` • ${format(checkIn, "PP")}` : ""} • ${guests} guest${guests > 1 ? "s" : ""}`,
+    });
+    setTimeout(() => {
+      document.getElementById("hotels")?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
@@ -27,38 +53,58 @@ const HeroSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted">
               <MapPin className="h-5 w-5 text-accent shrink-0" />
-              <div className="text-left">
+              <div className="text-left flex-1">
                 <p className="text-xs text-muted-foreground">Destination</p>
                 <input
                   type="text"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   placeholder="Where to?"
                   className="bg-transparent text-sm font-medium text-foreground outline-none w-full placeholder:text-muted-foreground"
                 />
               </div>
             </div>
-            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted">
-              <Calendar className="h-5 w-5 text-accent shrink-0" />
-              <div className="text-left">
-                <p className="text-xs text-muted-foreground">Check In</p>
-                <input
-                  type="text"
-                  placeholder="Add dates"
-                  className="bg-transparent text-sm font-medium text-foreground outline-none w-full placeholder:text-muted-foreground"
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted text-left hover:bg-muted/80 transition-colors">
+                  <CalendarIcon className="h-5 w-5 text-accent shrink-0" />
+                  <div className="text-left flex-1">
+                    <p className="text-xs text-muted-foreground">Check In</p>
+                    <p className={cn("text-sm font-medium", checkIn ? "text-foreground" : "text-muted-foreground")}>
+                      {checkIn ? format(checkIn, "PP") : "Add dates"}
+                    </p>
+                  </div>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={checkIn}
+                  onSelect={setCheckIn}
+                  disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
                 />
-              </div>
-            </div>
+              </PopoverContent>
+            </Popover>
+
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted">
               <Users className="h-5 w-5 text-accent shrink-0" />
-              <div className="text-left">
+              <div className="text-left flex-1">
                 <p className="text-xs text-muted-foreground">Guests</p>
                 <input
-                  type="text"
-                  placeholder="Add guests"
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={guests}
+                  onChange={(e) => setGuests(Math.max(1, Number(e.target.value) || 1))}
                   className="bg-transparent text-sm font-medium text-foreground outline-none w-full placeholder:text-muted-foreground"
                 />
               </div>
             </div>
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90 h-full rounded-xl text-base font-semibold shadow-gold gap-2">
+            <Button onClick={handleSearch} className="bg-accent text-accent-foreground hover:bg-accent/90 h-full rounded-xl text-base font-semibold shadow-gold gap-2">
               <Search className="h-5 w-5" />
               Search
             </Button>
