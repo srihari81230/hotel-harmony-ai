@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Sparkles, Brain, TrendingUp, Users } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Sparkles, Brain, TrendingUp, Users, Dumbbell, Snowflake, Coffee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import HotelCard from "./HotelCard";
 import HotelDetailModal from "./HotelDetailModal";
@@ -18,20 +18,20 @@ const AIRecommendations = () => {
   const [selectedPrefs, setSelectedPrefs] = useState<string[]>(["Beach Lover", "Luxury"]);
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
 
-  const togglePref = (p: string) => {
-    setSelectedPrefs((prev) =>
-      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]
-    );
-  };
+  const togglePref = (p: string) =>
+    setSelectedPrefs((prev) => (prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]));
 
-  // Simulate AI scoring
-  const recommended = hotels
-    .map((h) => ({
-      ...h,
-      matchScore: Math.floor(Math.random() * 15 + 85),
-    }))
-    .sort((a, b) => b.matchScore - a.matchScore)
-    .slice(0, 3);
+  // Pick one hotel per star tier 5→1 with gym/AC/breakfast preferred
+  const recommended = useMemo(() => {
+    const picks: Hotel[] = [];
+    for (const star of [5, 4, 3, 2, 1] as const) {
+      const tier = hotels
+        .filter((h) => h.starRating === star)
+        .sort((a, b) => Number(!!b.gym) + Number(!!b.acRooms) + Number(!!b.breakfastIncluded) - (Number(!!a.gym) + Number(!!a.acRooms) + Number(!!a.breakfastIncluded)));
+      if (tier[0]) picks.push({ ...tier[0], matchScore: 80 + star * 3 });
+    }
+    return picks;
+  }, []);
 
   return (
     <section id="ai-picks" className="py-20 bg-muted/50">
@@ -42,14 +42,13 @@ const AIRecommendations = () => {
             Powered by AI
           </div>
           <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Smart Recommendations
+            Smart Recommendations — From 5★ to 1★
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Tell us what you love, and our AI will find your perfect match using collaborative filtering and sentiment analysis.
+            One handpicked stay at every star tier. Highlighting Gym, AC Rooms and Breakfast where included.
           </p>
         </div>
 
-        {/* AI Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {[
             { icon: Brain, title: "Smart Matching", desc: "ML algorithms analyze 50+ data points to match you with ideal hotels" },
@@ -66,7 +65,6 @@ const AIRecommendations = () => {
           ))}
         </div>
 
-        {/* Preference Selection */}
         <div className="bg-card rounded-2xl p-8 shadow-card mb-12">
           <h3 className="font-heading text-xl font-semibold text-foreground mb-4">Select Your Preferences</h3>
           <div className="flex flex-wrap gap-3 mb-6">
@@ -84,16 +82,23 @@ const AIRecommendations = () => {
               </button>
             ))}
           </div>
+          <div className="flex flex-wrap gap-3 mb-6 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1"><Dumbbell className="h-4 w-4 text-accent" /> Gym</span>
+            <span className="inline-flex items-center gap-1"><Snowflake className="h-4 w-4 text-accent" /> AC Rooms</span>
+            <span className="inline-flex items-center gap-1"><Coffee className="h-4 w-4 text-accent" /> Breakfast Included</span>
+          </div>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
             <Sparkles className="h-4 w-4" />
             Get AI Recommendations
           </Button>
         </div>
 
-        {/* Results */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recommended.map((hotel) => (
-            <HotelCard key={hotel.id} hotel={hotel} onSelect={setSelectedHotel} />
+            <div key={hotel.id} className="space-y-2">
+              <p className="text-xs font-semibold tracking-widest uppercase text-accent text-center">{hotel.starRating}★ Pick</p>
+              <HotelCard hotel={hotel} onSelect={setSelectedHotel} />
+            </div>
           ))}
         </div>
       </div>
