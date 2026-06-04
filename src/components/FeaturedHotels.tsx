@@ -1,6 +1,7 @@
 import { useState } from "react";
 import HotelCard from "./HotelCard";
 import HotelDetailModal from "./HotelDetailModal";
+import SideRecommendations from "./SideRecommendations";
 import { hotels, categories, type Hotel } from "@/data/hotels";
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
   priceRange?: [number, number];
 }
 
-const FeaturedHotels = ({ searchQuery = "", priceRange = [1000, 50000] }: Props) => {
+const FeaturedHotels = ({ searchQuery = "", priceRange = [300, 15000] }: Props) => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
 
@@ -17,7 +18,7 @@ const FeaturedHotels = ({ searchQuery = "", priceRange = [1000, 50000] }: Props)
     .filter((h) => activeCategory === "All" || h.category === activeCategory)
     .filter((h) => !q || h.location.toLowerCase().includes(q) || h.name.toLowerCase().includes(q))
     .filter((h) => h.price >= priceRange[0] && h.price <= priceRange[1])
-    .sort((a, b) => a.price - b.price); // lowest first
+    .sort((a, b) => a.price - b.price);
 
   return (
     <section id="hotels" className="py-20 bg-background">
@@ -26,7 +27,7 @@ const FeaturedHotels = ({ searchQuery = "", priceRange = [1000, 50000] }: Props)
           <p className="text-accent font-medium tracking-widest uppercase text-sm mb-2">Handpicked for You</p>
           <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">Featured Hotels</h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Sorted by lowest price first — from cozy ₹1K stays to ₹50K luxury escapes across India.
+            Sorted by lowest price first — from cozy ₹300 stays to ₹15,000 luxury escapes across India.
           </p>
         </div>
 
@@ -48,10 +49,15 @@ const FeaturedHotels = ({ searchQuery = "", priceRange = [1000, 50000] }: Props)
 
         <p className="text-center text-sm text-muted-foreground mb-6">{filtered.length} hotels found</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((hotel) => (
-            <HotelCard key={hotel.id} hotel={hotel} onSelect={setSelectedHotel} />
-          ))}
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
+          <div className="hidden lg:block">
+            <SideRecommendations />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filtered.map((hotel) => (
+              <HotelCard key={hotel.id} hotel={hotel} onSelect={setSelectedHotel} />
+            ))}
+          </div>
         </div>
       </div>
 
