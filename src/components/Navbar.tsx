@@ -16,7 +16,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          {["Home", "Hotels", "AI Picks", "Bookings", "About"].map((item) => (
+          {["Home", "Hotels", "Bookings", "About"].map((item) => (
             <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} className="text-primary-foreground/70 hover:text-accent transition-colors text-sm font-medium">
               {item}
             </a>
@@ -39,7 +39,7 @@ const Navbar = () => {
 
       {isOpen && (
         <div className="md:hidden bg-primary border-t border-primary-foreground/10 px-4 py-4 space-y-3">
-          {["Home", "Hotels", "AI Picks", "Bookings", "About"].map((item) => (
+          {["Home", "Hotels", "Bookings", "About"].map((item) => (
             <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} className="block text-primary-foreground/70 hover:text-accent transition-colors text-sm font-medium py-2">
               {item}
             </a>
