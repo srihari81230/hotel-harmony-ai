@@ -109,20 +109,31 @@ const HeroSection = ({ onSearch }: Props) => {
             </Button>
           </div>
 
-          <div className="px-4 py-3 rounded-xl bg-muted text-left">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-muted-foreground">Price per night</p>
-              <p className="text-xs font-semibold text-foreground">
-                ₹{priceRange[0].toLocaleString("en-IN")} – ₹{priceRange[1].toLocaleString("en-IN")}
-              </p>
+          <div className="px-4 py-4 rounded-xl bg-gradient-to-r from-muted via-muted/70 to-muted text-left border border-accent/20">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Price per night</p>
+                <p className="text-base font-bold text-foreground mt-0.5">
+                  <span className="text-accent">₹{priceRange[0].toLocaleString("en-IN")}</span>
+                  <span className="text-muted-foreground mx-2">to</span>
+                  <span className="text-accent">₹{priceRange[1].toLocaleString("en-IN")}</span>
+                </p>
+              </div>
+              <div className="hidden sm:flex gap-1.5 text-[10px] text-muted-foreground">
+                <span className="px-2 py-1 rounded-full bg-card">Min ₹300</span>
+                <span className="px-2 py-1 rounded-full bg-card">Max ₹15,000</span>
+              </div>
             </div>
             <Slider
               value={priceRange}
-              min={1000}
-              max={50000}
-              step={500}
+              min={300}
+              max={15000}
+              step={100}
               onValueChange={(v) => setPriceRange([v[0], v[1]] as [number, number])}
             />
+            <div className="flex justify-between mt-2 text-[10px] text-muted-foreground">
+              <span>₹300</span><span>₹5,000</span><span>₹10,000</span><span>₹15,000</span>
+            </div>
           </div>
         </div>
 
