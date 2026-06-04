@@ -127,7 +127,7 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
           {/* RIGHT: Hotel detail */}
           <div>
             <div className="relative h-56">
-              <img src={hotel.image} alt={hotel.name} className="w-full h-full object-cover" />
+              <img src={hotel.gallery?.[0] ?? hotel.image} alt={hotel.name} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
               <div className="absolute bottom-4 left-6">
                 <Badge className="bg-accent text-accent-foreground border-0 mb-2">{hotel.category}</Badge>
@@ -141,6 +141,25 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
                 </div>
               </div>
             </div>
+
+            {hotel.gallery && hotel.gallery.length > 1 && (
+              <div className="px-6 pt-4">
+                <h4 className="font-heading font-semibold text-foreground mb-2 text-sm">Room Views</h4>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  {hotel.gallery.map((src, i) => {
+                    const labels = ["Bedroom", "Suite View", "Lounge", "Bathroom", "Exterior", "Pool"];
+                    return (
+                      <div key={src + i} className="relative rounded-md overflow-hidden aspect-square group">
+                        <img src={src} alt={`${hotel.name} ${labels[i] ?? "View"}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                        <span className="absolute bottom-0 left-0 right-0 bg-primary/70 text-primary-foreground text-[9px] text-center py-0.5">
+                          {labels[i] ?? "View"}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             <div className="p-6 space-y-5">
               <div className="flex items-center justify-between">
