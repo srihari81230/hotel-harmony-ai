@@ -28,6 +28,8 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
   const [children, setChildren] = useState<number>(0);
   const [vegFilter, setVegFilter] = useState<"all" | "veg" | "nonveg">("all");
   const [activeCuisine, setActiveCuisine] = useState<typeof cuisines[number]>("North Indian");
+  const [activeImage, setActiveImage] = useState<number>(0);
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   if (!hotel) return null;
 
