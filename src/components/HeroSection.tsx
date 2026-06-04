@@ -36,7 +36,7 @@ const HeroSection = ({ onSearch }: Props) => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
         <img src={heroImage} alt="Luxury hotel lobby" className="w-full h-full object-cover" width={1920} height={1080} />
         <div className="absolute inset-0 bg-primary/70" />
