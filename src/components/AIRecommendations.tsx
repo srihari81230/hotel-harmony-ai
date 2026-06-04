@@ -37,10 +37,6 @@ const AIRecommendations = () => {
     <section id="ai-picks" className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-medium mb-4">
-            <Sparkles className="h-4 w-4" />
-            Powered by AI
-          </div>
           <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
             Smart Recommendations — From 5★ to 1★
           </h2>
