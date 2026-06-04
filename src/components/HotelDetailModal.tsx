@@ -31,6 +31,8 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
   const [activeImage, setActiveImage] = useState<number>(0);
   const [lightbox, setLightbox] = useState<string | null>(null);
 
+  useEffect(() => { setActiveImage(0); setLightbox(null); }, [hotel?.id]);
+
   if (!hotel) return null;
 
   const nights =
