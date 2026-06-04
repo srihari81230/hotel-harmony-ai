@@ -1,10 +1,3 @@
-import hotel1 from "@/assets/hotel-1.jpg";
-import hotel2 from "@/assets/hotel-2.jpg";
-import hotel3 from "@/assets/hotel-3.jpg";
-import hotel4 from "@/assets/hotel-4.jpg";
-import hotel5 from "@/assets/hotel-5.jpg";
-import hotel6 from "@/assets/hotel-6.jpg";
-
 export interface SubRatings {
   cleanliness: number;
   roomComfort: number;
@@ -23,6 +16,7 @@ export interface Hotel {
   rating: number;
   reviews: number;
   image: string;
+  gallery: string[];
   amenities: string[];
   description: string;
   category: string;
@@ -38,7 +32,48 @@ export interface Hotel {
   subRatings: SubRatings;
 }
 
-const images = [hotel1, hotel2, hotel3, hotel4, hotel5, hotel6];
+// Realistic hotel/room photos sourced from Unsplash (real photography, not graphics).
+// Grouped by room "state" so each hotel shows varied views: bedroom, lounge, bath, exterior, pool.
+const u = (id: string) => `https://images.unsplash.com/${id}?w=1200&q=80&auto=format&fit=crop`;
+
+const ROOM_POOL = {
+  bedroom: [
+    "photo-1611892440504-42a792e24d32", "photo-1631049307264-da0ec9d70304",
+    "photo-1566665797739-1674de7a421a", "photo-1582719478250-c89cae4dc85b",
+    "photo-1590490360182-c33d57733427", "photo-1505693416388-ac5ce068fe85",
+    "photo-1540518614846-7eded433c457", "photo-1578683010236-d716f9a3f461",
+  ],
+  lounge: [
+    "photo-1564501049412-61c2a3083791", "photo-1551918120-9739cb430c6d",
+    "photo-1571896349842-33c89424de2d", "photo-1618773928121-c32242e63f39",
+    "photo-1549294413-26f195200c16", "photo-1455587734955-081b22074882",
+  ],
+  bath: [
+    "photo-1552321554-5fefe8c9ef14", "photo-1600566753190-17f0baa2a6c3",
+    "photo-1620626011761-996317b8d101", "photo-1604014237800-1c9102c219da",
+  ],
+  exterior: [
+    "photo-1566073771259-6a8506099945", "photo-1542314831-068cd1dbfeeb",
+    "photo-1520250497591-112f2f40a3f4", "photo-1551882547-ff40c63fe5fa",
+    "photo-1444201983204-c43cbd584d93", "photo-1517840901100-8179e982acb7",
+  ],
+  pool: [
+    "photo-1540541338287-41700207dee6", "photo-1571003123894-1f0594d2b5d9",
+    "photo-1602002418082-a4443e081dd1", "photo-1582719508461-905c673771fd",
+  ],
+};
+
+const buildGallery = (s: number): string[] => {
+  const pickN = <T,>(arr: T[], n: number, offset: number) =>
+    Array.from({ length: n }, (_, i) => arr[(offset + i) % arr.length]);
+  return [
+    ...pickN(ROOM_POOL.bedroom, 2, s),
+    pickN(ROOM_POOL.lounge, 1, s)[0],
+    pickN(ROOM_POOL.bath, 1, s)[0],
+    pickN(ROOM_POOL.exterior, 1, s)[0],
+    pickN(ROOM_POOL.pool, 1, s)[0],
+  ].map(u);
+};
 
 const cities = [
   "Goa", "Mumbai, Maharashtra", "Jaipur, Rajasthan", "Udaipur, Rajasthan", "Jaisalmer, Rajasthan",
