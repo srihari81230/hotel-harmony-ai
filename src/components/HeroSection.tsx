@@ -24,7 +24,7 @@ const HeroSection = ({ onSearch }: Props) => {
   const [checkIn, setCheckIn] = useState<Date | undefined>();
   const [adults, setAdults] = useState<number>(2);
   const [children, setChildren] = useState<number>(0);
-  const [priceRange, setPriceRange] = useState<[number, number]>([1000, 50000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([300, 15000]);
 
   const handleSearch = () => {
     onSearch({ query: destination.trim(), priceRange });
