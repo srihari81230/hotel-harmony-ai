@@ -129,8 +129,8 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
           {/* RIGHT: Hotel detail */}
           <div>
             <div className="relative h-56">
-              <img src={hotel.gallery?.[0] ?? hotel.image} alt={hotel.name} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
+              <img src={hotel.gallery?.[activeImage] ?? hotel.image} alt={hotel.name} className="w-full h-full object-cover cursor-zoom-in" onClick={() => setLightbox(hotel.gallery?.[activeImage] ?? hotel.image)} />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent pointer-events-none" />
               <div className="absolute bottom-4 left-6">
                 <Badge className="bg-accent text-accent-foreground border-0 mb-2">{hotel.category}</Badge>
                 <DialogHeader>
@@ -146,22 +146,40 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
 
             {hotel.gallery && hotel.gallery.length > 1 && (
               <div className="px-6 pt-4">
-                <h4 className="font-heading font-semibold text-foreground mb-2 text-sm">Room Views</h4>
+                <h4 className="font-heading font-semibold text-foreground mb-2 text-sm">Room Views — click to view</h4>
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {hotel.gallery.map((src, i) => {
                     const labels = ["Bedroom", "Suite View", "Lounge", "Bathroom", "Exterior", "Pool"];
+                    const isActive = i === activeImage;
                     return (
-                      <div key={src + i} className="relative rounded-md overflow-hidden aspect-square group">
+                      <button
+                        type="button"
+                        key={src + i}
+                        onClick={() => { setActiveImage(i); setLightbox(src); }}
+                        className={cn("relative rounded-md overflow-hidden aspect-square group ring-offset-background focus:outline-none focus:ring-2 focus:ring-accent", isActive && "ring-2 ring-accent")}
+                      >
                         <img src={src} alt={`${hotel.name} ${labels[i] ?? "View"}`} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                         <span className="absolute bottom-0 left-0 right-0 bg-primary/70 text-primary-foreground text-[9px] text-center py-0.5">
                           {labels[i] ?? "View"}
                         </span>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
               </div>
             )}
+
+            {lightbox && (
+              <div
+                role="dialog"
+                onClick={() => setLightbox(null)}
+                className="fixed inset-0 z-[80] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out animate-fade-in"
+              >
+                <img src={lightbox} alt="Room view" className="max-w-full max-h-full object-contain rounded-lg shadow-2xl" />
+                <button onClick={(e) => { e.stopPropagation(); setLightbox(null); }} className="absolute top-4 right-4 text-white bg-black/50 rounded-full w-10 h-10 flex items-center justify-center text-2xl">×</button>
+              </div>
+            )}
+
 
             <div className="p-6 space-y-5">
               <div className="flex items-center justify-between">
