@@ -123,12 +123,12 @@ const pick = <T,>(arr: T[], s: number) => arr[s % arr.length];
 const buildHotel = (name: string, city: string, idx: number): Hotel => {
   idCounter++;
   const s = seed(name + city);
-  // Price spread 1,000 → 50,000
-  const price = 1000 + ((s % 491) * 100); // 1000 to 50000 in 100 steps
+  // Price spread 300 → 15,000
+  const price = 300 + ((s % 148) * 100); // 300 to ~15,000 in 100 steps
   const hasDiscount = s % 3 === 0;
   const discountPct = 10 + (s % 36); // 10-45%
   const originalPrice = hasDiscount ? Math.round((price / (1 - discountPct / 100)) / 50) * 50 : undefined;
-  const star = (price < 5000 ? 1 + (s % 2) : price < 15000 ? 2 + (s % 2) : price < 30000 ? 3 + (s % 2) : 4 + (s % 2)) as Hotel["starRating"];
+  const star = (price < 2000 ? 1 : price < 5000 ? 2 + (s % 2) : price < 9000 ? 3 + (s % 2) : 4 + (s % 2)) as Hotel["starRating"];
   const rating = Math.min(5, Math.max(3.2, 3.5 + (star * 0.3) + ((s % 7) / 20)));
   const cat = categoryByCity(city);
   const baseAmen = ["Restaurant"];
