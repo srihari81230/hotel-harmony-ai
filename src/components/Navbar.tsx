@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Sparkles, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SignInDialog from "./SignInDialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [signInOpen, setSignInOpen] = useState(false);
+  const { user, logout } = useAuth();
+
+  const links = ["Home", "Hotels", "Bookings", "Profile", "About"];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md border-b border-primary-foreground/10">
@@ -16,20 +19,37 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          {["Home", "Hotels", "Bookings", "About"].map((item) => (
-            <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} className="text-primary-foreground/70 hover:text-accent transition-colors text-sm font-medium">
+          {links.map((item) => (
+            <a key={item} href={`#${item.toLowerCase()}`} className="text-primary-foreground/70 hover:text-accent transition-colors text-sm font-medium">
               {item}
             </a>
           ))}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" onClick={() => setSignInOpen(true)} className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10">
-            Sign In
-          </Button>
-          <Button onClick={() => setSignInOpen(true)} className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold">
-            Get Started
-          </Button>
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 gap-2">
+                  <div className="w-7 h-7 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-xs font-bold">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm">{user.name}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>
+                  <div className="text-xs font-normal text-muted-foreground">Signed in as</div>
+                  <div className="text-sm">{user.email}</div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild><a href="#profile"><User className="h-4 w-4 mr-2" /> My Profile</a></DropdownMenuItem>
+                <DropdownMenuItem asChild><a href="#bookings">My Bookings</a></DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="text-destructive"><LogOut className="h-4 w-4 mr-2" /> Sign out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         <button className="md:hidden text-primary-foreground" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
@@ -39,18 +59,18 @@ const Navbar = () => {
 
       {isOpen && (
         <div className="md:hidden bg-primary border-t border-primary-foreground/10 px-4 py-4 space-y-3">
-          {["Home", "Hotels", "Bookings", "About"].map((item) => (
-            <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} className="block text-primary-foreground/70 hover:text-accent transition-colors text-sm font-medium py-2">
+          {links.map((item) => (
+            <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsOpen(false)} className="block text-primary-foreground/70 hover:text-accent transition-colors text-sm font-medium py-2">
               {item}
             </a>
           ))}
-          <Button onClick={() => { setSignInOpen(true); setIsOpen(false); }} className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-            Sign In
-          </Button>
+          {user && (
+            <Button onClick={() => { logout(); setIsOpen(false); }} variant="outline" className="w-full">
+              <LogOut className="h-4 w-4 mr-2" /> Sign out ({user.name})
+            </Button>
+          )}
         </div>
       )}
-
-      <SignInDialog open={signInOpen} onOpenChange={setSignInOpen} />
     </nav>
   );
 };
