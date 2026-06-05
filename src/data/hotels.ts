@@ -192,7 +192,96 @@ for (let i = hotelNames.length; i < cities.length; i++) {
   list.push(buildHotel(`${cities[i].split(",")[0]} Royale`, cities[i], i));
 }
 
+// === 50 extra affordable Indian demo hotels (₹500 – ₹4,500) ===
+const extraNames = [
+  "Comfort Inn", "Budget Stay", "Sunrise Lodge", "Green Leaf Hotel", "City Centre Inn",
+  "Cozy Corner", "Travellers Nest", "Backpacker House", "Yatri Niwas", "Heritage Bunk",
+  "Sapphire Stay", "Pearl Inn", "Lotus Lodge", "Riverside Rooms", "Hilltop Hostel",
+  "Sunny Days Inn", "Moonlight Stay", "Garden View Hotel", "Plaza Rooms", "Express Inn",
+  "Holiday Hub", "Wanderer's Inn", "The Pilgrim Stay", "Banyan Stay", "Spice Route Inn",
+  "Mango Tree Lodge", "Coconut Grove Rooms", "Tea Estate Stay", "Riverbend Inn", "Lakeview Rooms",
+  "Hilltop View", "Forest Edge Stay", "Beachside Bunk", "Heritage Walk Inn", "Old Town Stay",
+  "Spice Garden Lodge", "Sunset Inn", "Daffodil Stay", "Marigold Rooms", "Jasmine Inn",
+  "Tulip Stay", "Rose Garden Inn", "Orchid Lodge", "Pinewood Stay", "Cedar Inn",
+  "Maple Stay", "Willow Inn", "Bamboo Grove", "Lotus Pond Stay", "Banyan Roots Inn",
+];
+
+const cheapCities = [
+  "Rishikesh, Uttarakhand", "Pushkar, Rajasthan", "Hampi, Karnataka", "Varanasi, Uttar Pradesh",
+  "Mcleodganj, Himachal Pradesh", "Kasol, Himachal Pradesh", "Manali, Himachal Pradesh",
+  "Gokarna, Karnataka", "Pondicherry", "Ooty, Tamil Nadu", "Munnar, Kerala", "Wayanad, Kerala",
+  "Coorg, Karnataka", "Mysore, Karnataka", "Tirupati, Andhra Pradesh", "Madurai, Tamil Nadu",
+  "Jodhpur, Rajasthan", "Bikaner, Rajasthan", "Mount Abu, Rajasthan", "Bhopal, Madhya Pradesh",
+  "Khajuraho, Madhya Pradesh", "Indore, Madhya Pradesh", "Nashik, Maharashtra", "Aurangabad, Maharashtra",
+  "Goa", "Diu", "Daman", "Shillong, Meghalaya", "Tawang, Arunachal Pradesh", "Darjeeling, West Bengal",
+  "Gangtok, Sikkim", "Kalimpong, West Bengal", "Puri, Odisha", "Bhubaneswar, Odisha",
+  "Rameswaram, Tamil Nadu", "Kanyakumari, Tamil Nadu", "Alleppey, Kerala", "Kovalam, Kerala",
+  "Visakhapatnam, Andhra Pradesh", "Vijayawada, Andhra Pradesh", "Hyderabad, Telangana",
+  "Pune, Maharashtra", "Lonavala, Maharashtra", "Mahabaleshwar, Maharashtra", "Matheran, Maharashtra",
+  "Chandigarh", "Amritsar, Punjab", "Dehradun, Uttarakhand", "Haridwar, Uttarakhand", "Agra, Uttar Pradesh",
+];
+
+const buildAffordableHotel = (name: string, city: string, idx: number): Hotel => {
+  idCounter++;
+  const s = seed(name + city + "x");
+  const price = 500 + ((s % 41) * 100); // 500 – 4,500
+  const hasDiscount = s % 2 === 0;
+  const discountPct = 10 + (s % 31);
+  const originalPrice = hasDiscount ? Math.round((price / (1 - discountPct / 100)) / 50) * 50 : undefined;
+  const star = (price < 1200 ? 1 : price < 2200 ? 2 : price < 3500 ? 3 : 4) as Hotel["starRating"];
+  const rating = Math.min(5, Math.max(3.4, 3.6 + star * 0.25 + ((s % 7) / 25)));
+  const cat = categoryByCity(city);
+  const ac = s % 3 !== 0;
+  const gym = star >= 3 && s % 4 === 0;
+  const breakfast = s % 2 === 1;
+  const pool = star >= 3 && s % 5 === 0;
+  const amen = ["Restaurant", "Wi-Fi"];
+  if (ac) amen.push("AC Rooms");
+  if (gym) amen.push("Gym");
+  if (breakfast) amen.push("Breakfast");
+  if (pool) amen.push("Swimming Pool");
+  if (cat === "Beach") amen.push("Beach Access");
+  if (cat === "Mountain") amen.push("Mountain View");
+  if (cat === "Historic") amen.push("Heritage Tour");
+
+  return {
+    id: String(idCounter),
+    name: `${name} ${city.split(",")[0]}`,
+    location: city,
+    price,
+    originalPrice,
+    discount: hasDiscount ? discountPct : undefined,
+    rating: Math.round(rating * 10) / 10,
+    reviews: 80 + (s % 1800),
+    image: buildGallery(s)[0],
+    gallery: buildGallery(s),
+    amenities: amen,
+    description: `An affordable ${star}-star ${cat.toLowerCase()} stay in ${city}. Clean rooms, friendly staff and great value for budget travellers.`,
+    category: cat,
+    starRating: star,
+    birthdayParties: star >= 3 && s % 6 === 0,
+    freeCancellation: s % 2 === 0,
+    support24x7: s % 7 === 0,
+    freeSwimmingPool: pool && s % 4 === 0,
+    gym,
+    acRooms: ac,
+    breakfastIncluded: breakfast,
+    subRatings: {
+      cleanliness: Math.min(10, Math.round((rating * 2 + (s % 5) / 5) * 10) / 10),
+      roomComfort: Math.min(10, Math.round((rating * 2 + ((s + 1) % 5) / 5) * 10) / 10),
+      service: Math.min(10, Math.round((rating * 2 + ((s + 2) % 5) / 5) * 10) / 10),
+      location: Math.min(10, Math.round((rating * 2 + ((s + 3) % 5) / 5) * 10) / 10),
+      valueForMoney: Math.min(10, Math.round((rating * 2 + ((s + 4) % 5) / 5) * 10) / 10),
+    },
+  };
+};
+
+for (let i = 0; i < extraNames.length; i++) {
+  list.push(buildAffordableHotel(extraNames[i], cheapCities[i % cheapCities.length], i));
+}
+
 export const hotels: Hotel[] = list;
+
 
 export const categories = ["All", "Beach", "Mountain", "City", "Historic", "Desert"];
 
