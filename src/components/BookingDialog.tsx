@@ -206,7 +206,7 @@ const BookingDialog = ({ hotel, open, onClose }: Props) => {
               <Badge className="mt-2 bg-emerald-600 text-white">Booking ID: {confirmed.id.slice(0, 8).toUpperCase()}</Badge>
             </div>
             <div className="flex gap-2 justify-center pt-2">
-              <Button variant="outline" onClick={() => { onClose(); setTimeout(() => document.getElementById("bookings")?.scrollIntoView({ behavior: "smooth" }), 100); }}>View My Bookings</Button>
+              <Button variant="outline" onClick={() => { onClose(); window.location.href = "/bookings"; }}>View My Bookings</Button>
               <Button onClick={onClose} className="bg-accent text-accent-foreground hover:bg-accent/90">Done</Button>
             </div>
           </div>
