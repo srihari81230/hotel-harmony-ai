@@ -8,11 +8,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 type NavLink = { label: string; to: string };
 
 const links: NavLink[] = [
-  { label: "Home", to: "/#home" },
+  { label: "Home", to: "/" },
   { label: "Hotels", to: "/#hotels" },
   { label: "Bookings", to: "/bookings" },
   { label: "Profile", to: "/profile" },
-  { label: "About", to: "/#about" },
+  { label: "About", to: "/about" },
 ];
 
 const Navbar = () => {
