@@ -23,6 +23,18 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
   const [activeImage, setActiveImage] = useState<number>(0);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const handleBookNow = () => {
+    if (!user) {
+      toast({ title: "Please sign in", description: "Sign in to book this stay." });
+      onClose();
+      navigate("/login");
+      return;
+    }
+    setBookingOpen(true);
+  };
 
   useEffect(() => { setActiveImage(0); setLightbox(null); setBookingOpen(false); }, [hotel?.id]);
 
