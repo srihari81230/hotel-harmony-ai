@@ -39,7 +39,10 @@ interface AuthCtx {
 const Ctx = createContext<AuthCtx | null>(null);
 
 const USER_KEY = "luxestay.user";
-const BOOK_KEY = "luxestay.bookings";
+
+function bookingsKey(email: string) {
+  return `luxestay.bookings.${email}`;
+}
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProfile | null>(() => {
@@ -48,16 +51,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
   const [bookings, setBookings] = useState<Booking[]>(() => {
     if (typeof window === "undefined") return [];
-    try { const v = localStorage.getItem(BOOK_KEY); return v ? JSON.parse(v) : []; } catch { return []; }
+    try {
+      const storedUser = localStorage.getItem(USER_KEY);
+      const u = storedUser ? JSON.parse(storedUser) : null;
+      if (u?.email) {
+        const v = localStorage.getItem(bookingsKey(u.email));
+        return v ? JSON.parse(v) : [];
+      }
+    } catch { /* ignore */ }
+    return [];
   });
 
-  useEffect(() => { if (user) localStorage.setItem(USER_KEY, JSON.stringify(user)); else localStorage.removeItem(USER_KEY); }, [user]);
-  useEffect(() => { localStorage.setItem(BOOK_KEY, JSON.stringify(bookings)); }, [bookings]);
+  useEffect(() => {
+    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+    else localStorage.removeItem(USER_KEY);
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.email) {
+      localStorage.setItem(bookingsKey(user.email), JSON.stringify(bookings));
+    }
+  }, [bookings, user?.email]);
 
   const login = (email: string, name?: string) => {
-    setUser({ email, name: name || email.split("@")[0] });
+    const newUser: UserProfile = { email, name: name || email.split("@")[0] };
+    setUser(newUser);
+    try {
+      const v = localStorage.getItem(bookingsKey(email));
+      setBookings(v ? JSON.parse(v) : []);
+    } catch {
+      setBookings([]);
+    }
   };
-  const logout = () => setUser(null);
+  const logout = () => {
+    setUser(null);
+    setBookings([]);
+  };
   const updateProfile = (patch: Partial<UserProfile>) => setUser((u) => (u ? { ...u, ...patch } : u));
   const addBooking = (b: Omit<Booking, "id" | "createdAt">): Booking => {
     const full: Booking = { ...b, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
