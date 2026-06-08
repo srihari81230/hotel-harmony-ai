@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Check, ShieldCheck, Clock, Waves, PartyPopper } from "lucide-react";
@@ -6,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { foodMenu, type Hotel } from "@/data/hotels";
 import BookingDialog from "./BookingDialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface Props {
   hotel: Hotel | null;
@@ -20,6 +23,18 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
   const [activeImage, setActiveImage] = useState<number>(0);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const handleBookNow = () => {
+    if (!user) {
+      toast({ title: "Please sign in", description: "Sign in to book this stay." });
+      onClose();
+      navigate("/login");
+      return;
+    }
+    setBookingOpen(true);
+  };
 
   useEffect(() => { setActiveImage(0); setLightbox(null); setBookingOpen(false); }, [hotel?.id]);
 
@@ -170,7 +185,7 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
                   <span className="text-3xl font-bold text-foreground">₹{hotel.price.toLocaleString("en-IN")}</span>
                   <span className="text-muted-foreground"> / night</span>
                 </div>
-                <Button onClick={() => setBookingOpen(true)} className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold px-8 py-3 text-base">Book Now</Button>
+                <Button onClick={handleBookNow} className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold px-8 py-3 text-base">Book Now</Button>
               </div>
             </div>
           </div>

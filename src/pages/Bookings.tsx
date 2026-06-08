@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,7 +20,29 @@ const Bookings = () => {
   const [tab, setTab] = useState<Tab>("all");
   const [q, setQ] = useState("");
 
-  if (!user) return <Navigate to="/" replace />;
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col bg-muted/20">
+        <Navbar />
+        <main className="flex-1 pt-20 flex items-center justify-center">
+          <div className="max-w-md mx-auto text-center bg-card border border-border rounded-2xl p-10 m-4">
+            <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+            <h2 className="font-heading text-2xl font-bold">Sign in to view your bookings</h2>
+            <p className="text-sm text-muted-foreground mt-2">
+              Your trips, upcoming stays and past adventures are saved to your account.
+            </p>
+            <div className="flex gap-2 justify-center mt-6">
+              <Button onClick={() => navigate("/login")} className="bg-accent text-accent-foreground hover:bg-accent/90">
+                Sign in
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/")}>Back to home</Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   const now = Date.now();
   const filtered = useMemo(() => {
