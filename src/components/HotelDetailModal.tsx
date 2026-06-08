@@ -185,7 +185,7 @@ const HotelDetailModal = ({ hotel, onClose }: Props) => {
                   <span className="text-3xl font-bold text-foreground">₹{hotel.price.toLocaleString("en-IN")}</span>
                   <span className="text-muted-foreground"> / night</span>
                 </div>
-                <Button onClick={() => setBookingOpen(true)} className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold px-8 py-3 text-base">Book Now</Button>
+                <Button onClick={handleBookNow} className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold px-8 py-3 text-base">Book Now</Button>
               </div>
             </div>
           </div>
