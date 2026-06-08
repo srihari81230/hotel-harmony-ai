@@ -33,6 +33,7 @@ const Login = () => {
     }
     login(email.trim(), name.trim() || undefined);
     toast({ title: mode === "signup" ? "Welcome to LuxeStay! 🎉" : "Welcome back 👋", description: email });
+    navigate("/");
   };
 
   return (
