@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Profile from "./pages/Profile.tsx";
 import Bookings from "./pages/Bookings.tsx";
 import About from "./pages/About.tsx";
+import Login from "./pages/Login.tsx";
 
 const queryClient = new QueryClient();
 
